@@ -2,103 +2,97 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
+  - php
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>
-
+    - <a href='http://localhost:4567/rpc.html'>Rpc Documentation</a>
+    - <a href='http://localhost:4567'>Rest Documentation</a>
+  
 includes:
   - errors
+  - changeLog
 
 search: true
 ---
 
-# Introduction
+# Rest API
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Au cours de la guerre de Sécession, cinq Nordistes : l'ingénieur Cyrus Smith et son chien Top, le reporter Gédéon Spilett, le Noir Nab, le marin Pencroff et le jeune Harbert, prisonniers des troupes séparatistes, se sont enfuis en balIon. Pris dans la tempête, ils échouent sur une île déserte, en plein océan Pacifique.
+Ingénieux, persévérants, les cinq compagnons, pourtant privés de tout, ne tardent pas à s'organiser, à vivre presque normalement. D'ailleurs, l'île, qu'ils baptisent du nom de Lincoln, offre des ressources admirables et tout à fait inattendues. Mais une série de faits inexplicables, des coïncidences troublantes les obligent à croire à la présence d'une puissance mystérieuse qui les épie sans cesse et conduit leur destinée, leur imposant sa volonté par des voies détournées, intervenant pour les sauver aux moments critiques
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+## API Standard Response
 
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+> sample response without errors
 
-# Authentication
-
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
+```json
+{
+        "success": true,
+        "code": [],
+        "data": [],
+        "total_rows": 0,
+        "returned_rows": 0,
+        "private_key": null,
+        "public_key": null
+}
 ```
 
-```python
-import kittn
+Name | Description
+---- | ------------
+success | true or false whether the call succeeded or not
+code | an array of error response codes, each response code is described per call.
+data | an array of a single model returned by the call. 
+total_rows | The total number or rows you have access to.
+returned_rows | The total number or rows returned.
+next | The url for the next set of objects. It will be null if there are no more objects to retrieve. `Only for GET calls`.
+prev |  The url for the previous set of objects. It will be null on the first page or if there are no more objects to retrieve. `Only for GET calls`.
+private_key | Private key used to encode urls. It will be sent only when authenticating with Basic Auth.
+public_key | Public key is returned along with a private key on call authenticated with Basic Auth. Use this key to authenticate subsequent calls.
 
-api = kittn.authorize('meowmeowmeow')
-```
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+# Member
 
-> Make sure to replace `meowmeowmeow` with your API key.
+## The Member Object
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
+Attribute | Type | S | Description
+--------- | ---- | --- | ------------
+**id** | *uuid*  | T | represent an uuid. Can be set or `auto` generated
+first_name | *string* | F | the first name of the user.
+last_name | *string* | F | the last name of the user. Lorem ipsum dolor sit amet.
+created_on | *datetime* | T | Donec malesuada magna dolor, scelerisque vestibulum ipsum volutpat nec.
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+S : searchable field, indicate whether the field is searchable.
 </aside>
 
-# Kittens
 
-## Get All Kittens
+## Get
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
+> The call returns JSON structured like this:
 
 ```json
 [
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
+    {
+        "success": true,
+        "code": [],
+        "data": [
+            {
+              "id": "059274be-d4bf-4d5a-b801-de8461d395d4",
+              "first_name": "Fluffums",
+              "last_name": "calico",
+              "created_on": "2016-04-05 00:00:01"
+            },
+            {
+              "id": "d58bcff5-025c-4e4e-93a6-c5af4f2edd22",
+              "first_name": "Fluffums",
+              "last_name": "calico",
+              "created_on": "2016-04-06 00:00:01"
+            }
+        ],
+        "total_rows": 2,
+        "returned_rows": 2,
+        "private_key": null,
+        "public_key": null
+    }     
 ]
 ```
 
@@ -106,63 +100,69 @@ This endpoint retrieves all kittens.
 
 ### HTTP Request
 
-`GET http://example.com/api/kittens`
+`GET http://alpha.busy.com/member?_version=3.2`
 
 ### Query Parameters
 
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+Parameter |  Description
+--------- | -----------
+id | If set the result will only return that particular member.
+first_name | If set to false, the result will include kittens that have already been adopted.
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
+### Error Codes
 
-## Get a Specific Kitten
+Error Code | Meaning
+---------- | -------
+400 | Bad Request -- Your request sucks
+401 | Unauthorized -- Your API key is wrong
+403 | Forbidden -- The kitten requested is hidden for administrators only
 
-```ruby
-require 'kittn'
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
 
-```python
-import kittn
+<iframe style="width:500px; height: 500px; background-color: #ffffff;" frameborder="0" src="http://localhost:4567/disqus.html"> </iframe>
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+[try it now](http://busybusyvero.getsandbox.com/hello) you can also [Discuss it](https://busybusy.slack.com/)
 
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
+## Post
 
-> The above command returns JSON structured like this:
+> The call returns JSON structured like this:
 
 ```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
+[
+    {
+        "success": true,
+        "code": [],
+        "data": [
+            {
+              "id": "059274be-d4bf-4d5a-b801-de8461d395d4",
+              "first_name": "Fluffums",
+              "last_name": "calico",
+              "created_on": "2016-04-05 00:00:01"
+            }
+        ],
+        "total_rows": 1,
+        "returned_rows": 1,
+        "private_key": null,
+        "public_key": null
+    }     
+]
 ```
 
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
+This endpoint retrieves all kittens.
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST http://alpha.busy.com/member?_version=3.2`
 
-### URL Parameters
+### Query Parameters
 
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
+Parameter | Required | Description
+--------- | -------- | -----------
+id | false | If set the result will only return that particular member.
+first_name | true | If set to false, the result will include kittens that have already been adopted.
+last_name | true | If set to false, the result will include kittens that have already been adopted.
+created_on | false | default to `1970-01-01 00:00:00`.
 
+# Organization
+
+            
